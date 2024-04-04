@@ -1,0 +1,43 @@
+* administrador
+
+login
+
+cargar un curso
+editar un curso
+borrar un curso
+
+cargar un alumno
+eliminar un alumno
+
+cargar un profesor
+eliminar un profesor
+
+
+
+
+* Alumno
+
+registrarse (anotarse a un curso)
+
+login
+
+Navegar en el curso (ver los modulos y los temas)
+
+valora un curso por unica vez
+
+
+
+
+* Profesor
+
+Misma vista que alumno
+
+
+
+Extras
+
+calcular cantidad de vacantes disponibles
+calcular cantidad de alumnos que pasaron por un curso
+Calcular valoracion total
+
+Super administrador --> Cargue y borre administradores
