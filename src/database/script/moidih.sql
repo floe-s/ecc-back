@@ -3,54 +3,65 @@
 -- Model: New Model    Version: 1.0
 -- MySQL Workbench Forward Engineering
 
-SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
-SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
-SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+-- ONLY MySQL Workbench 
+SET
+  @OLD_UNIQUE_CHECKS = @ @UNIQUE_CHECKS,
+  UNIQUE_CHECKS = 0;
+
+SET
+  @OLD_FOREIGN_KEY_CHECKS = @ @FOREIGN_KEY_CHECKS,
+  FOREIGN_KEY_CHECKS = 0;
+
+SET
+  @OLD_SQL_MODE = @ @SQL_MODE,
+  SQL_MODE = 'ONLY_FULL_GROUP_BY,STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION';
+-- ONLY MySQL Workbench
 
 -- -----------------------------------------------------
 -- Schema moidih
 -- -----------------------------------------------------
-
 -- -----------------------------------------------------
 -- Schema moidih
 -- -----------------------------------------------------
-CREATE SCHEMA IF NOT EXISTS `moidih` DEFAULT CHARACTER SET utf8mb4 ;
-USE `moidih` ;
+CREATE SCHEMA IF NOT EXISTS `moidih` DEFAULT CHARACTER SET utf8mb4;
+
+USE `moidih`;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Rols`
+-- Table `moidih`.`Rol`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Rols` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Rol` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
-insert into Rols(nombre)
+insert into
+  Rol(nombre)
 values
-	('Administrador'),
-    ('Profesor'),
-    ('Usuario');
-
+  ('Administrador'),
+  ('Profesor'),
+  ('Usuario');
 
 -- -----------------------------------------------------
--- Table `moidih`.`Tematicas`
+-- Table `moidih`.`Tematica`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Tematicas` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Tematica` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
-insert into Tematicas(nombre)
+insert into
+  Tematica(nombre)
 values
-	('Presencial'),
-    ('Virtual');
+  ('Presencial'),
+  ('Virtual');
 
 -- -----------------------------------------------------
--- Table `moidih`.`Usuario_dbs`
+-- Table `moidih`.`Usuario`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Usuario_dbs` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Usuario` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
   `apellido` VARCHAR(45) NOT NULL,
@@ -64,59 +75,72 @@ CREATE TABLE IF NOT EXISTS `moidih`.`Usuario_dbs` (
   `Tematica_id` INT NOT NULL,
   `Administrador_id` INT,
   PRIMARY KEY (`id`),
-  INDEX `fk_Usuario_Rol_idx` (`Rol_id` ASC)  ,
-  INDEX `fk_Usuario_Tematica1_idx` (`Tematica_id` ASC)  ,
-  INDEX `fk_Usuario_Usuario1_idx` (`Administrador_id` ASC)  ,
-  CONSTRAINT `fk_Usuario_Rols`
-    FOREIGN KEY (`Rol_id`)
-    REFERENCES `moidih`.`Rols` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Usuario_Tematica1`
-    FOREIGN KEY (`Tematica_id`)
-    REFERENCES `moidih`.`Tematicas` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Usuario_Usuario1`
-    FOREIGN KEY (`Administrador_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  INDEX `fk_Usuario_Rol_idx` (`Rol_id` ASC),
+  INDEX `fk_Usuario_Tematica1_idx` (`Tematica_id` ASC),
+  INDEX `fk_Usuario_Usuario1_idx` (`Administrador_id` ASC),
+  CONSTRAINT `fk_Usuario_Rol` FOREIGN KEY (`Rol_id`) REFERENCES `moidih`.`Rol` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Usuario_Tematica1` FOREIGN KEY (`Tematica_id`) REFERENCES `moidih`.`Tematica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Usuario_Usuario1` FOREIGN KEY (`Administrador_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
-insert into Usuario_dbs(nombre,apellido,email,clave,telefono,imagen, fecha_creacion,fecha_eliminacion,Rol_id, Tematica_id,Administrador_id)
+insert into
+  Usuario(
+    nombre,
+    apellido,
+    email,
+    clave,
+    telefono,
+    imagen,
+    fecha_creacion,
+    fecha_eliminacion,
+    Rol_id,
+    Tematica_id,
+    Administrador_id
+  )
 values
-	('admin','Moidi','admin@gmail.com','$2a$10$aUdcbgF77/Kd0D1ErnlmsedTIjSNI2ZdmTSo15faBJJ4/RQ18s.GS','31347890','1669567076571urban-user.png','2022-11-27 05:00:00','2022-11-27 05:00:00',1,1,NULL);
+  (
+    'admin',
+    'Moidi',
+    'admin@gmail.com',
+    '$2a$10$aUdcbgF77/Kd0D1ErnlmsedTIjSNI2ZdmTSo15faBJJ4/RQ18s.GS',
+    '31347890',
+    '1669567076571urban-user.png',
+    '2022-11-27 05:00:00',
+    '2022-11-27 05:00:00',
+    1,
+    1,
+    NULL
+  );
 
 -- -----------------------------------------------------
--- Table `moidih`.`Nivel_cursos`
+-- Table `moidih`.`Nivel_curso`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Nivel_cursos` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Nivel_curso` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
-insert into Nivel_cursos(nombre)
-values 
-	('Basico'),
-    ('Intermedio'),
-    ('Avanzado');
+insert into
+  Nivel_curso(nombre)
+values
+  ('Basico'),
+  ('Intermedio'),
+  ('Avanzado');
 
 -- -----------------------------------------------------
--- Table `moidih`.`Tipo_cursos`
+-- Table `moidih`.`Tipo_curso`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Tipo_cursos` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Tipo_curso` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Curso_dbs`
+-- Table `moidih`.`Curso`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Curso_dbs` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Curso` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(50) NOT NULL,
   `descripcion` TEXT(500) NOT NULL,
@@ -136,38 +160,17 @@ CREATE TABLE IF NOT EXISTS `moidih`.`Curso_dbs` (
   `Nivel_curso_id` INT,
   `Tipo_curso_id` INT,
   PRIMARY KEY (`id`),
-  INDEX `fk_Curso_Usuario1_idx` (`Administrador_id` ASC)  ,
-  INDEX `fk_Curso_Usuario2_idx` (`Profesor_id` ASC)  ,
-  INDEX `fk_Curso_Tematica1_idx` (`Tematica_id` ASC)  ,
-  INDEX `fk_Curso_Nivel_curso1_idx` (`Nivel_curso_id` ASC)  ,
-  INDEX `fk_Curso_Tipo_curso1_idx` (`Tipo_curso_id` ASC)  ,
-  CONSTRAINT `fk_Curso_Usuario1`
-    FOREIGN KEY (`Administrador_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Curso_Usuario2`
-    FOREIGN KEY (`Profesor_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Curso_Tematica1`
-    FOREIGN KEY (`Tematica_id`)
-    REFERENCES `moidih`.`Tematicas` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Curso_Nivel_curso1`
-    FOREIGN KEY (`Nivel_curso_id`)
-    REFERENCES `moidih`.`Nivel_cursos` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Curso_Tipo_curso1`
-    FOREIGN KEY (`Tipo_curso_id`)
-    REFERENCES `moidih`.`Tipo_curso` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+  INDEX `fk_Curso_Usuario1_idx` (`Administrador_id` ASC),
+  INDEX `fk_Curso_Usuario2_idx` (`Profesor_id` ASC),
+  INDEX `fk_Curso_Tematica1_idx` (`Tematica_id` ASC),
+  INDEX `fk_Curso_Nivel_curso1_idx` (`Nivel_curso_id` ASC),
+  INDEX `fk_Curso_Tipo_curso1_idx` (`Tipo_curso_id` ASC),
+  CONSTRAINT `fk_Curso_Usuario1` FOREIGN KEY (`Administrador_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Curso_Usuario2` FOREIGN KEY (`Profesor_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Curso_Tematica1` FOREIGN KEY (`Tematica_id`) REFERENCES `moidih`.`Tematica` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Curso_Nivel_curso1` FOREIGN KEY (`Nivel_curso_id`) REFERENCES `moidih`.`Nivel_curso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Curso_Tipo_curso1` FOREIGN KEY (`Tipo_curso_id`) REFERENCES `moidih`.`Tipo_curso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `moidih`.`Turno_horarios`
@@ -175,14 +178,13 @@ ENGINE = InnoDB;
 CREATE TABLE IF NOT EXISTS `moidih`.`Turno_horarios` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Comisions`
+-- Table `moidih`.`Comision`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Comisions` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Comision` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `numero_comision` INT NOT NULL,
   `cantidad_vacantes` INT NOT NULL,
@@ -196,82 +198,47 @@ CREATE TABLE IF NOT EXISTS `moidih`.`Comisions` (
   `Curso_db_id` INT NOT NULL,
   `Turno_horario_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Comision_Usuario1_idx` (`Administrador_id` ASC)  ,
-  INDEX `fk_Comision_Usuario2_idx` (`Profesor_id` ASC)  ,
-  INDEX `fk_Comision_Curso1_idx` (`Curso_db_id` ASC)  ,
-  INDEX `fk_Comision_Turno_horario1_idx` (`Turno_horario_id` ASC)  ,
-  CONSTRAINT `fk_Comision_Usuario1`
-    FOREIGN KEY (`Administrador_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Comision_Usuario2`
-    FOREIGN KEY (`Profesor_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Comision_Curso1`
-    FOREIGN KEY (`Curso_db_id`)
-    REFERENCES `moidih`.`Curso_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Comision_Turno_horario1`
-    FOREIGN KEY (`Turno_horario_id`)
-    REFERENCES `moidih`.`Turno_horarios` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+  INDEX `fk_Comision_Usuario1_idx` (`Administrador_id` ASC),
+  INDEX `fk_Comision_Usuario2_idx` (`Profesor_id` ASC),
+  INDEX `fk_Comision_Curso1_idx` (`Curso_db_id` ASC),
+  INDEX `fk_Comision_Turno_horario1_idx` (`Turno_horario_id` ASC),
+  CONSTRAINT `fk_Comision_Usuario1` FOREIGN KEY (`Administrador_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Comision_Usuario2` FOREIGN KEY (`Profesor_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Comision_Curso1` FOREIGN KEY (`Curso_db_id`) REFERENCES `moidih`.`Curso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Comision_Turno_horario1` FOREIGN KEY (`Turno_horario_id`) REFERENCES `moidih`.`Turno_horarios` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Cursars`
+-- Table `moidih`.`Cursar`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Cursars` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Cursar` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `valoracion` INT NOT NULL,
   `Alumno_id` INT NOT NULL,
   `Curso_db_id` INT NOT NULL,
   `Comision_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Cursar_Usuario1_idx` (`Alumno_id` ASC)  ,
-  INDEX `fk_Cursar_Curso1_idx` (`Curso_db_id` ASC)  ,
-  INDEX `fk_Cursar_Comision1_idx` (`Comision_id` ASC)  ,
-  CONSTRAINT `fk_Cursar_Usuario1`
-    FOREIGN KEY (`Alumno_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Cursar_Curso1`
-    FOREIGN KEY (`Curso_db_id`)
-    REFERENCES `moidih`.`Curso_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Cursar_Comision1`
-    FOREIGN KEY (`Comision_id`)
-    REFERENCES `moidih`.`Comisions` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+  INDEX `fk_Cursar_Usuario1_idx` (`Alumno_id` ASC),
+  INDEX `fk_Cursar_Curso1_idx` (`Curso_db_id` ASC),
+  INDEX `fk_Cursar_Comision1_idx` (`Comision_id` ASC),
+  CONSTRAINT `fk_Cursar_Usuario1` FOREIGN KEY (`Alumno_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Cursar_Curso1` FOREIGN KEY (`Curso_db_id`) REFERENCES `moidih`.`Curso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Cursar_Comision1` FOREIGN KEY (`Comision_id`) REFERENCES `moidih`.`Comision` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Modulos`
+-- Table `moidih`.`Modulo`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Modulos` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Modulo` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `numero_modulo` INT NOT NULL,
   `nombre` VARCHAR(45) NOT NULL,
   `descripcion` TEXT(500) NOT NULL,
   `Curso_db_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Modulo_Curso1_idx` (`Curso_db_id` ASC)  ,
-  CONSTRAINT `fk_Modulo_Curso1`
-    FOREIGN KEY (`Curso_db_id`)
-    REFERENCES `moidih`.`Curso_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+  INDEX `fk_Modulo_Curso1_idx` (`Curso_db_id` ASC),
+  CONSTRAINT `fk_Modulo_Curso1` FOREIGN KEY (`Curso_db_id`) REFERENCES `moidih`.`Curso` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
 -- Table `moidih`.`Temas`
@@ -282,48 +249,59 @@ CREATE TABLE IF NOT EXISTS `moidih`.`Temas` (
   `nombre` VARCHAR(45) NOT NULL,
   `Modulo_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Tema_Modulo1_idx` (`Modulo_id` ASC)  ,
-  CONSTRAINT `fk_Tema_Modulo1`
-    FOREIGN KEY (`Modulo_id`)
-    REFERENCES `moidih`.`Modulos` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
-
+  INDEX `fk_Tema_Modulo1_idx` (`Modulo_id` ASC),
+  CONSTRAINT `fk_Tema_Modulo1` FOREIGN KEY (`Modulo_id`) REFERENCES `moidih`.`Modulo` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Academias`
+-- Table `moidih`.`Academia`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Academias` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Academia` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `nombre` VARCHAR(45) NOT NULL,
-  PRIMARY KEY (`id`))
-ENGINE = InnoDB;
-
+  PRIMARY KEY (`id`)
+) ENGINE = InnoDB;
 
 -- -----------------------------------------------------
--- Table `moidih`.`Asociados`
+-- Table `moidih`.`Asociado`
 -- -----------------------------------------------------
-CREATE TABLE IF NOT EXISTS `moidih`.`Asociados` (
+CREATE TABLE IF NOT EXISTS `moidih`.`Asociado` (
   `id` INT NOT NULL AUTO_INCREMENT,
   `Usuario_db_id` INT NOT NULL,
   `Academia_id` INT NOT NULL,
   PRIMARY KEY (`id`),
-  INDEX `fk_Asociado_Usuario1_idx` (`Usuario_db_id` ASC)  ,
-  INDEX `fk_Asociado_Academia1_idx` (`Academia_id` ASC)  ,
-  CONSTRAINT `fk_Asociado_Usuario1`
-    FOREIGN KEY (`Usuario_db_id`)
-    REFERENCES `moidih`.`Usuario_dbs` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION,
-  CONSTRAINT `fk_Asociado_Academia1`
-    FOREIGN KEY (`Academia_id`)
-    REFERENCES `moidih`.`Academias` (`id`)
-    ON DELETE NO ACTION
-    ON UPDATE NO ACTION)
-ENGINE = InnoDB;
+  INDEX `fk_Asociado_Usuario1_idx` (`Usuario_db_id` ASC),
+  INDEX `fk_Asociado_Academia1_idx` (`Academia_id` ASC),
+  CONSTRAINT `fk_Asociado_Usuario1` FOREIGN KEY (`Usuario_db_id`) REFERENCES `moidih`.`Usuario` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION,
+  CONSTRAINT `fk_Asociado_Academia1` FOREIGN KEY (`Academia_id`) REFERENCES `moidih`.`Academia` (`id`) ON DELETE NO ACTION ON UPDATE NO ACTION
+) ENGINE = InnoDB;
 
+-- ONLY MySQL Workbench
+SET
+  SQL_MODE = @OLD_SQL_MODE;
 
-SET SQL_MODE=@OLD_SQL_MODE;
-SET FOREIGN_KEY_CHECKS=@OLD_FOREIGN_KEY_CHECKS;
-SET UNIQUE_CHECKS=@OLD_UNIQUE_CHECKS;
+SET
+  FOREIGN_KEY_CHECKS = @OLD_FOREIGN_KEY_CHECKS;
+
+SET
+  UNIQUE_CHECKS = @OLD_UNIQUE_CHECKS;
+
+/* Modificado - 04/04/2024
+
+  Nombres de las tablas => {
+    Rols -> Rol
+    Tematicas -> Tematica
+    Usuario_dbs -> Usuario
+    Nivel_cursos -> Nivel_curso
+    Tipo_cursos -> Tipo_curso
+    Curso_dbs -> Curso
+    Turno_horarios -> Turno_horario
+    Comisions-> Comision
+    Cursars -> Cursar
+    Modulos -> Modulo
+    Temas -> Tema
+    Academias -> Academia
+    Asociados -> Asociado
+  } 
+
+/
