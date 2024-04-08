@@ -1,29 +1,36 @@
-/* let fs = require("fs");  */
-/* let moment = require("moment");  */
-
-
-
 const express = require("express");
 const app = express();
-
+const cors = require('cors');
+const path = require("path");
+const methodOverride = require('method-override')
+// ROUTES REQUIRES
 const mainRoute = require("./src/routes/mainRoute");
 const productRoute = require("./src/routes/productRoute");
 const userRoute = require("./src/routes/userRoute");
 
-/* app.listen(process.env.PORT || 3002, function() {
-  console.log("Servidor corriendo en el puerto 3002");
-}); */
 
-const path = require("path");
+// CONFIGS
 
-app.listen(3000, () => console.log("Servidor corriendo "));
+// Cors => Para permitir peticiones desde los navegadores.
+app.use(cors())
 
-/* app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "/views/index.html"));
-}); */
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', '*');
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  next();
+})
 
+// Permitir la transferencia de información a través del body.
+app.use(express.urlencoded({ 
+  extended: false
+}))
+app.use(express.json());
+app.use(methodOverride('_method'))
+// ROUTES
 app.use("/", mainRoute);
 
 app.use("/product", productRoute);
 
 app.use("/user", userRoute);
+
+app.listen(3000, () => console.log("Servidor corriendo \nLink: http://localhost:3000/"));
