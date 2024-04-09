@@ -37,7 +37,7 @@ function usuarioModel(sequelize, DataTypes) {
         },
         fecha_eliminacion: {
             type: DataTypes.DATE,
-            allowNull: false
+            allowNull: true
         },
         Rol_id: {
             type: DataTypes.INTEGER,

@@ -70,7 +70,7 @@ CREATE TABLE IF NOT EXISTS `moidih`.`Usuario` (
   `telefono` VARCHAR(45) NOT NULL,
   `imagen` VARCHAR(45) NOT NULL,
   `fecha_creacion` DATETIME NOT NULL,
-  `fecha_eliminacion` DATETIME NOT NULL,
+  `fecha_eliminacion` DATETIME,
   `Rol_id` INT NOT NULL,
   `Tematica_id` INT NOT NULL,
   `Administrador_id` INT,
