@@ -17,6 +17,14 @@ const validation  = {
             .isLength({min: 6, max:12}).withMessage('Debe introducir un número de teléfono válido.'),
         body('imagen')
             .notEmpty().trim().withMessage('Debe seleccionar una imagen de perfil.'),
+    ],
+    userLoginProcess: [
+        body('email')
+            .notEmpty().trim().withMessage('Debe introducir una dirección de email.')
+            .isEmail().withMessage('Debe introducir una dirección de email válida.'),
+        body('password')
+            .notEmpty().trim().withMessage('Debe introducir una contraseña.')
+            .isLength({min: 6}).withMessage('La contraseña debe tener 6 caracteres como mínimo.'),
     ]
 }
 
