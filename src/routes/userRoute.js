@@ -12,5 +12,6 @@ router.post('/login', validations.userLoginProcess, controller.userLoginProcess)
 
 // UPDATE REQUESTS
 router.put('/selfUpdate', validations.userSelfUpdate, controller.userSelfUpdate);
+router.put('/updatePassword', validations.userSelfUpdatePassword, controller.userSelfUpdatePassword) //Esta función debe recibir un id, una clave y una newClave para funcionar correctamente.
 
 module.exports = router;

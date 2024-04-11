@@ -3,6 +3,30 @@ const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
 
+let updatePasswordProcess = async (newPassword, userId, res) => {
+  db.Usuario.update({
+    clave: bcrypt.hashSync(newPassword, 10)
+  }, {
+    where: {
+      id: userId
+    }
+  }).then(data => {
+    console.log('\nContraseña cambiada.\n')
+    return res.json({
+      status: 'success',
+      message: 'La contraseña se ha modificado correctamente.',
+      data: data
+    })
+  }).catch(err => {
+    return res.json({
+      status: 'error',
+      error: err,
+      message: err.message,
+      serverMessage: 'Hubo un error al intentar modificar la contraseña del usuario.'
+    })
+  })
+}
+
 const controller = {
   user: async (req, res) => {
 
@@ -50,7 +74,7 @@ const controller = {
             nombre: req.body.nombre,
             apellido: req.body.apellido,
             email: req.body.email,
-            clave: bcrypt.hashSync(req.body.clave, 10),
+            clave: bcrypt.hashSync(req.body.email, 10), // Para la creación del usuario, se utilizará el mail como contraseña.
             telefono: req.body.telefono,
             imagen: req.body.imagen,
             fecha_creacion: new Date(),
@@ -98,7 +122,7 @@ const controller = {
       // VALIDACIÓN DE EXISTENCIA DE USUARIO.
       let user = await db.Usuario.findOne({
         where: {
-          email: req.body.email
+          id: req.body.id
         },
         include: [
           { association: 'rol' },
@@ -179,7 +203,7 @@ const controller = {
       /* Condicional para verificar que el usuario modifique sus datos, 
       pero si está modificando su dirección de email por una que ya está en uso,
       la petición sea rechazada.  */
-      if((!userExists) || (userExists && req.body.id == userExists.id)) {
+      if ((!userExists) || (userExists && req.body.id == userExists.id)) {
         db.Usuario.update({
           nombre: req.body.nombre,
           apellido: req.body.apellido,
@@ -190,14 +214,14 @@ const controller = {
           where: {
             id: req.body.id
           }
-        }).then( data => {
+        }).then(data => {
           return res.json({
             status: 2001,
             message: "Actualizado correctamente.",
             data: data
           })
         })
-      }else{
+      } else {
         return res.json({
           status: 400,
           error: "User already exists",
@@ -205,6 +229,52 @@ const controller = {
         })
       }
 
+    } else {
+      return res.json({
+        status: 5000,
+        error: 'Empty fields.',
+        message: errors.mapped()
+      })
+    }
+  },
+
+  userSelfUpdatePassword: async (req, res) => { //Cambio de contraseña propia
+    const errors = validationResult(req)
+
+    if (errors.isEmpty()) {
+      try {
+        let user = await db.Usuario.findOne({ //Búsqueda del usuario
+          where: {
+            id: req.body.id
+          }
+        })
+
+        if (user) {
+          let password = bcrypt.compareSync(req.body.clave, user.clave) //Verificación de que sea el usuario quien está cambiando la contraseña.
+
+          if (password) {
+            console.log('\nIniciando proceso de cambio de contraseña.\n')
+            updatePasswordProcess(req.body.newClave, user.id, res) // Proceso de cambio de contraseña.
+          } else{
+            return res.json({
+              status: 'error',
+              message: 'La contraseña es incorrecta.'
+            })
+          }
+        } else {
+          return res.json({
+            status: 404,
+            message: 'Usuario no encontrado.'
+          })
+        }
+      } catch (err) {
+        return res.json({
+          status: 'error',
+          message: err.message,
+          serverMessage: 'Hubo un error en la base de datos al verificar la contraseña del usuario.',
+          error: err
+        })
+      }
     } else {
       return res.json({
         status: 5000,
