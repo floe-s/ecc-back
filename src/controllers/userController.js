@@ -255,7 +255,7 @@ const controller = {
           if (password) {
             console.log('\nIniciando proceso de cambio de contraseña.\n')
             updatePasswordProcess(req.body.newClave, user.id, res) // Proceso de cambio de contraseña.
-          } else{
+          } else {
             return res.json({
               status: 'error',
               message: 'La contraseña es incorrecta.'
@@ -282,7 +282,55 @@ const controller = {
         message: errors.mapped()
       })
     }
-  }
-};
+  },
+  userDelete: async (req, res) => {
+    const errors = validationResult(req)
 
+    if (errors.isEmpty()) {
+      try {
+        let userFound = await db.Usuario.findOne({
+          where: {
+            id: req.body.id
+          }
+        })
+
+        if (userFound) {
+          db.Usuario.update({
+            fecha_eliminacion: new Date()
+          }, {
+            where: {
+              id: userFound.id
+            }
+          }).then(data => {
+            return res.json({
+              status: 201,
+              message: 'Usuario eliminado correctamente.'
+            })
+          })
+        } else {
+          return res.json({
+            status: 404,
+            error: 'User not found',
+            message: 'Usuario no encontrado.'
+          })
+        }
+      } catch (err) {
+        console.error(err)
+        return res.json({
+          status: 5001,
+          err: err,
+          errMessage: err.message,
+          message: 'Hubo un error en la base de datos.'
+        })
+      }
+    } else {
+      return res.json({
+        status: 5000,
+        error: 'Empty fields.',
+        message: errors.mapped()
+      })
+
+    }
+  }
+}
 module.exports = controller;
