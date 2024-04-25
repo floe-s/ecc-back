@@ -13,6 +13,14 @@ const validation = {
             .isLength({ min: 6, max: 12 }).withMessage('Debe introducir un número de teléfono válido.'),
         body('imagen')
             .notEmpty().trim().withMessage('Debe seleccionar una imagen de perfil.'),
+        body('lang')
+            .notEmpty().trim().withMessage('Debe seleccionar el lenguaje del usuario.')
+            .custom((value, {req}) => {
+                if(req.body.lang === 'es' || req.body.lang === 'pt'){
+                    return true
+                }
+                return false;
+            }).withMessage('El lenguaje seleccionado no es válido.')
     ],
     userLoginProcess: [
         body('email')

@@ -2,32 +2,12 @@ const db = require('../database/models')
 const bcrypt = require('bcryptjs')
 const { validationResult } = require('express-validator')
 const jwt = require('jsonwebtoken')
-
-let updatePasswordProcess = async (newPassword, userId, res) => {
-  db.Usuario.update({
-    clave: bcrypt.hashSync(newPassword, 10)
-  }, {
-    where: {
-      id: userId
-    }
-  }).then(data => {
-    console.log('\nContraseña cambiada.\n')
-    return res.json({
-      status: 'success',
-      message: 'La contraseña se ha modificado correctamente.',
-      data: data
-    })
-  }).catch(err => {
-    return res.json({
-      status: 'error',
-      error: err,
-      message: err.message,
-      serverMessage: 'Hubo un error al intentar modificar la contraseña del usuario.'
-    })
-  })
-}
+const updatePasswordProcess = require('../helpers/updatePasswordProcess.js')
+const mailConfig = require('../helpers/nodemailer/mailConfigs.js')
+const sendWelcomeMessage = require('../helpers/nodemailer/mailUserCreate.js')
 
 const controller = {
+  //#region GET METHODS
   user: async (req, res) => {
 
     try {
@@ -55,7 +35,7 @@ const controller = {
     }
 
   },
-
+  // #region POST METHODS
   userCreate: async (req, res) => {
     let errors = validationResult(req);
 
@@ -83,11 +63,7 @@ const controller = {
             Tematica_id: req.body.tematica,
             Administrador_id: req.body.Administrador_id
           }).then(result => {
-            return res.json({
-              status: 201,
-              message: 'Usuario creado exitosamente.',
-              data: result
-            })
+            sendWelcomeMessage(result, req.body.lang, res)
           })
         } else {
           return res.json({
@@ -189,6 +165,7 @@ const controller = {
       })
     }
   },
+  // #region UPDATE METHODS
   userSelfUpdate: async (req, res) => { //Función para que el usuario modifique sus propios datos.
     const errors = validationResult(req)
 
@@ -283,6 +260,7 @@ const controller = {
       })
     }
   },
+  //#region DELETE METHOD
   userDelete: async (req, res) => {
     const errors = validationResult(req)
 
@@ -329,7 +307,6 @@ const controller = {
         error: 'Empty fields.',
         message: errors.mapped()
       })
-
     }
   }
 }
