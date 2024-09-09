@@ -1,7 +1,7 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const validations = require('../middlewares/validations.js');
-const controller = require('../controllers/userController');
+import validations from '../middlewares/validations.js';
+import controller from '../services/userServices.js';
 
 // GET REQUESTS
 router.get('/users', controller.user);
@@ -14,4 +14,4 @@ router.post('/login', validations.userLoginProcess, controller.userLoginProcess)
 router.put('/selfUpdate', validations.userSelfUpdate, controller.userSelfUpdate);
 router.put('/updatePassword', validations.userSelfUpdatePassword, controller.userSelfUpdatePassword) //Esta función debe recibir un id, una clave y una newClave para funcionar correctamente.
 
-module.exports = router;
+export default router;

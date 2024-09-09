@@ -1,4 +1,4 @@
-function nivelCursoModel(sequelize, DataTypes) {
+function Nivel_curso(sequelize, DataTypes) {
     const alias = 'Nivel_curso';
 
     const cols = {
@@ -22,14 +22,17 @@ function nivelCursoModel(sequelize, DataTypes) {
     const Nivel_curso = sequelize.define(alias, cols, config);
 
     // RELACIONES
-    Nivel_curso.associate = function(models) {
-        Nivel_curso.hasMany(models.Curso, {
-            as: 'cursos',
-            foreignKey: 'Nivel_curso_id'
-        });
+    Nivel_curso.associate = function (models) {
+        if (models.Curso) {
+
+            Nivel_curso.hasMany(models.Curso, {
+                as: 'cursos',
+                foreignKey: 'Nivel_curso_id'
+            });
+        }
     };
 
     return Nivel_curso;
 }
 
-module.exports = nivelCursoModel;
+export default Nivel_curso;

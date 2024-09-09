@@ -1,4 +1,4 @@
-const { body } = require('express-validator');
+import { body } from 'express-validator';
 const validation = {
     userCreate: [
         body('nombre')
@@ -53,4 +53,4 @@ const validation = {
     ]
 }
 
-module.exports = validation
+export default validation

@@ -1,4 +1,4 @@
-function moduloModel(sequelize, DataTypes) {
+function Modulo(sequelize, DataTypes) {
     const alias = 'Modulo';
 
     const cols = {
@@ -34,18 +34,22 @@ function moduloModel(sequelize, DataTypes) {
     const Modulo = sequelize.define(alias, cols, config);
 
     // RELACIONES
-    Modulo.associate = function(models) {
-        Modulo.belongsTo(models.Curso, {
-            as: 'curso',
-            foreignKey: 'Curso_db_id'
-        });
-        Modulo.hasMany(models.Tema, {
-            as: 'Tema',
-            foreignKey: 'Modulo_id'
-        });
+    Modulo.associate = function (models) {
+        if (models.Curso) {
+            Modulo.belongsTo(models.Curso, {
+                as: 'curso',
+                foreignKey: 'Curso_db_id'
+            });
+        }
+        if (models.Tema) {
+            Modulo.hasMany(models.Tema, {
+                as: 'Tema',
+                foreignKey: 'Modulo_id'
+            });
+        }
     };
 
     return Modulo;
 }
 
-module.exports = moduloModel;
+export default Modulo;

@@ -1,10 +1,11 @@
-const db = require('../database/models')
-const bcrypt = require('bcryptjs')
-const { validationResult } = require('express-validator')
-const jwt = require('jsonwebtoken')
-const updatePasswordProcess = require('../helpers/updatePasswordProcess.js')
-const mailConfig = require('../helpers/nodemailer/mailConfigs.js')
-const sendWelcomeMessage = require('../helpers/nodemailer/mailUserCreate.js')
+import db from '../database/models/index.js'
+import bcrypt from 'bcryptjs'
+import { validationResult } from 'express-validator'
+import jwt from 'jsonwebtoken'
+import updatePasswordProcess from '../helpers/updatePasswordProcess.js'
+import sendWelcomeMessage from '../helpers/nodemailer/mailUserCreate.js'
+import createToken from '../helpers/generateToken.js'
+const tokenKey = process.env.TOKEN_SECRET
 
 const controller = {
   //#region GET METHODS
@@ -13,21 +14,21 @@ const controller = {
     try {
 
       let users = await db.Usuario.findAll({
-        include: [
+        where: {
+          fecha_eliminacion: null
+        }, include: [
           { association: 'rol' },
           { association: 'tematica' },
           { association: 'administrador' }
         ]
       })
 
-      return res.json({
-        status: 200,
+      return res.status(200).json({
         message: 'Founded ' + users.length + ' users.',
         data: users
       })
     } catch (err) {
-      return res.json({
-        status: 500,
+      return res.status(500).json({
         message: "Database Error",
         errMessage: err.message,
         err: err
@@ -42,49 +43,51 @@ const controller = {
     if (errors.isEmpty()) { //Validacion de campos vacíos
 
       try {
-
+        const { email } = req.body
         let userExists = await db.Usuario.findOne({ //Validación de que el usuario no exista.
           where: {
-            email: req.body.email
+            email,
           }
         })
 
         if (!userExists) { // Si el usuario no existe, pasa a crearse en la base de datos.
+
+          const { nombre, apellido, telefono, imagen, rol, tematica, Administrador_id } = req.body
+
           db.Usuario.create({
-            nombre: req.body.nombre,
-            apellido: req.body.apellido,
-            email: req.body.email,
-            clave: bcrypt.hashSync(req.body.email, 10), // Para la creación del usuario, se utilizará el mail como contraseña.
-            telefono: req.body.telefono,
-            imagen: req.body.imagen,
+            nombre,
+            apellido,
+            email,
+            clave: bcrypt.hashSync(email, 10), // Para la creación del usuario, se utilizará el mail como contraseña.
+            telefono,
+            imagen,
             fecha_creacion: new Date(),
             fecha_eliminacion: null,
-            Rol_id: req.body.rol,
-            Tematica_id: req.body.tematica,
-            Administrador_id: req.body.Administrador_id
+            Rol_id: rol,
+            Tematica_id: tematica,
+            Administrador_id
           }).then(result => {
             sendWelcomeMessage(result, req.body.lang, res)
           })
         } else {
-          return res.json({
-            status: 5001,
-            message: 'Este usuario ya existe.',
-            errorCode: 'USER_ALREADY_EXIST'
+          return res.status(400).json({
+            errors: {
+              email: {
+                msg: 'Este usuario ya existe.',
+              }
+            }
           })
         }
       } catch (err) {
         console.error(err)
-        return res.json({
-          status: 5000,
+        return res.status(500).json({
           message: 'Error en la base de datos.',
           err: err,
           errorCode: err.message
         })
       }
     } else {
-      return res.json({
-        status: 5000,
-        error: 'Empty fields.',
+      return res.status(400).json({
         message: errors.mapped()
       })
     }
@@ -98,7 +101,8 @@ const controller = {
       // VALIDACIÓN DE EXISTENCIA DE USUARIO.
       let user = await db.Usuario.findOne({
         where: {
-          id: req.body.id
+          email: req.body.email,
+          fecha_eliminacion: null,
         },
         include: [
           { association: 'rol' },
@@ -114,28 +118,20 @@ const controller = {
 
         if (password) {
 
-          let tokenData = { // Lo que se guarda en el token
-            time: new Date(),
-            data: user
-          }
-          const token = jwt.sign(tokenData, process.env.TOKEN_SECRET, {
-            expiresIn: '24h' // Creación del token.
-          })
-
-          if (req.body.keepMeIn) { //Creación de token alternativo en caso de que el usuario elija mantener su sesión iniciada.
-            var tokenKeep = jwt.sign(tokenData, process.env.TOKEN_SECRET, {
-              expiresIn: '24000h'
-            })
-          }
-
-
-          // Eliminación de claves por seguridad
           user.clave = undefined;
           user.administrador.clave = undefined;
 
+          let token = createToken(user, new Date(), '24h', tokenKey)
+
+          if (req.body.keepMeIn) { //Creación de token alternativo en caso de que el usuario elija mantener su sesión iniciada.
+            var tokenKeep = createToken(user, new Date(), '24000h', tokenKey)
+          }
+
+          req.session.user = user;
+          req.session.apiKey = token;
+
           // Devolución de los datos.
-          return res.json({
-            status: 201,
+          return res.status(200).json({
             data: user,
             accessToken: token,
             keepMeIn: req.body.keepMeIn ? 'true' : 'false',
@@ -143,23 +139,20 @@ const controller = {
           })
 
         } else {
-          return res.json({
-            status: 403,
+          return res.status(400).json({
             error: "Invalid password",
             message: "Contraseña incorrecta"
           })
         }
 
       } else {
-        return res.json({
-          status: 404,
+        return res.status(404).json({
           error: 'User not found',
           message: 'Usuario no encontrado.'
         })
       }
     } else {
-      return res.json({
-        status: 5000,
+      return res.status(400).json({
         error: 'Empty fields.',
         message: errors.mapped()
       })
@@ -192,23 +185,20 @@ const controller = {
             id: req.body.id
           }
         }).then(data => {
-          return res.json({
-            status: 2001,
+          return res.status(201).json({
             message: "Actualizado correctamente.",
             data: data
           })
         })
       } else {
-        return res.json({
-          status: 400,
+        return res.status(400).json({
           error: "User already exists",
           message: "Ya existe un usuario con esta dirección de email."
         })
       }
 
     } else {
-      return res.json({
-        status: 5000,
+      return res.status(400).json({
         error: 'Empty fields.',
         message: errors.mapped()
       })
@@ -233,28 +223,28 @@ const controller = {
             console.log('\nIniciando proceso de cambio de contraseña.\n')
             updatePasswordProcess(req.body.newClave, user.id, res) // Proceso de cambio de contraseña.
           } else {
-            return res.json({
-              status: 'error',
-              message: 'La contraseña es incorrecta.'
+            return res.status(400).json({
+              errors:{
+                clave: {
+                  msg: 'La contraseña es incorrecta.'
+                }
+              }
             })
           }
         } else {
-          return res.json({
-            status: 404,
+          return res.status(404).json({
             message: 'Usuario no encontrado.'
           })
         }
       } catch (err) {
-        return res.json({
-          status: 'error',
+        return res.status(500).json({
           message: err.message,
           serverMessage: 'Hubo un error en la base de datos al verificar la contraseña del usuario.',
           error: err
         })
       }
     } else {
-      return res.json({
-        status: 5000,
+      return res.status(400).json({
         error: 'Empty fields.',
         message: errors.mapped()
       })
@@ -280,34 +270,30 @@ const controller = {
               id: userFound.id
             }
           }).then(data => {
-            return res.json({
-              status: 201,
+            return res.status(201).json({
               message: 'Usuario eliminado correctamente.'
             })
           })
         } else {
-          return res.json({
-            status: 404,
+          return res.status(404).json({
             error: 'User not found',
             message: 'Usuario no encontrado.'
           })
         }
       } catch (err) {
         console.error(err)
-        return res.json({
-          status: 5001,
+        return res.status(500).json({
           err: err,
           errMessage: err.message,
           message: 'Hubo un error en la base de datos.'
         })
       }
     } else {
-      return res.json({
-        status: 5000,
+      return res.status(400).json({
         error: 'Empty fields.',
         message: errors.mapped()
       })
     }
   }
 }
-module.exports = controller;
+export default controller;

@@ -1,4 +1,4 @@
-function cursoModel(sequelize, DataTypes) {
+function Curso(sequelize, DataTypes) {
     const alias = 'Curso';
 
     const cols = {
@@ -87,33 +87,44 @@ function cursoModel(sequelize, DataTypes) {
 
     // RELACIONES
     Curso.associate = function(models) {
-        Curso.belongsTo(models.Usuario, {
-            as: 'administrador',
-            foreignKey: 'Administrador_id'
-        });
-        Curso.belongsTo(models.Usuario, {
-            as: 'profesor',
-            foreignKey: 'Profesor_id'
-        });
-        Curso.belongsTo(models.Tematica, {
-            as: 'tematica',
-            foreignKey: 'Tematica_id'
-        });
-        Curso.belongsTo(models.Nivel_curso, {
-            as: 'nivelCurso',
-            foreignKey: 'Nivel_curso_id'
-        });
-        Curso.belongsTo(models.Tipo_curso, {
-            as: 'tipoCurso',
-            foreignKey: 'Tipo_curso_id'
-        });
-        Curso.hasMany(models.Comision, {
-            as: 'comisiones',
-            foreignKey: 'Curso_db_id'
-        });
+        if (models.Usuario) {
+            Curso.belongsTo(models.Usuario, {
+                as: 'administrador',
+                foreignKey: 'Administrador_id'
+            });
+            Curso.belongsTo(models.Usuario, {
+                as: 'profesor',
+                foreignKey: 'Profesor_id'
+            });
+        }
+        if (models.Tematica) {
+            Curso.belongsTo(models.Tematica, {
+                as: 'tematica',
+                foreignKey: 'Tematica_id'
+            });
+        }
+        if (models.Nivel_curso) {
+            Curso.belongsTo(models.Nivel_curso, {
+                as: 'nivelCurso',
+                foreignKey: 'Nivel_curso_id'
+            });
+        }
+        if (models.Tipo_curso) {
+            Curso.belongsTo(models.Tipo_curso, {
+                as: 'tipoCurso',
+                foreignKey: 'Tipo_curso_id'
+            });
+        }
+        if (models.Comision) {
+            Curso.hasMany(models.Comision, {
+                as: 'comisiones',
+                foreignKey: 'Curso_db_id'
+            });
+        }
     };
+    
 
     return Curso;
 }
 
-module.exports = cursoModel;
+export default Curso;

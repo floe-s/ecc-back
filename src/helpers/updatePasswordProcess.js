@@ -1,5 +1,5 @@
-const db = require('../database/models')
-const bcrypt = require('bcryptjs')
+import db from '../database/models/index.js';
+import bcrypt from 'bcryptjs';
 
 let updatePasswordProcess = async (newPassword, userId, res) => {
     db.Usuario.update({
@@ -25,4 +25,4 @@ let updatePasswordProcess = async (newPassword, userId, res) => {
     })
 }
 
-module.exports = updatePasswordProcess
+export default updatePasswordProcess

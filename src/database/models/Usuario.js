@@ -1,4 +1,4 @@
-function usuarioModel(sequelize, DataTypes) {
+export default function Usuario (sequelize, DataTypes) {
     const alias = 'Usuario';
 
     const cols = {
@@ -63,21 +63,26 @@ function usuarioModel(sequelize, DataTypes) {
 
     // RELACIONES
     Usuario.associate = function(models) {
-        Usuario.belongsTo(models.Rol, {
-            as: 'rol',
-            foreignKey: 'Rol_id'
-        });
-        Usuario.belongsTo(models.Tematica, {
-            as: 'tematica',
-            foreignKey: 'Tematica_id'
-        });
-        Usuario.belongsTo(models.Usuario, {
-            as: 'administrador',
-            foreignKey: 'Administrador_id'
-        });
+        if (models.Rol) {
+            Usuario.belongsTo(models.Rol, {
+                as: 'rol',
+                foreignKey: 'Rol_id'
+            });
+        }
+        if (models.Tematica) {
+            Usuario.belongsTo(models.Tematica, {
+                as: 'tematica',
+                foreignKey: 'Tematica_id'
+            });
+        }
+        if (models.Usuario) {
+            Usuario.belongsTo(models.Usuario, {
+                as: 'administrador',
+                foreignKey: 'Administrador_id'
+            });
+        }
     };
+    
 
     return Usuario;
 }
-
-module.exports = usuarioModel;

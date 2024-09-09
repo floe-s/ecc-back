@@ -1,9 +1,9 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
 
-const controller = require("../controllers/productController");
+import controller from "../services/productServices.js";
 
 router.get('/products', controller.product);
 /* router.get('/products:id', (req, res) {}); Rutas parametrizadas o dinámicas */
 
-module.exports = router;
+export default router;

@@ -1,4 +1,4 @@
-function tipoCursoModel(sequelize, DataTypes) {
+function Tipo_curso(sequelize, DataTypes) {
     const alias = 'Tipo_curso';
 
     const cols = {
@@ -23,13 +23,16 @@ function tipoCursoModel(sequelize, DataTypes) {
 
     // RELACIONES
     Tipo_curso.associate = function(models) {
-        Tipo_curso.hasMany(models.Curso, {
-            as: 'cursos',
-            foreignKey: 'Tipo_curso_id'
-        });
+        if(models.Curso){
+
+            Tipo_curso.hasMany(models.Curso, {
+                as: 'cursos',
+                foreignKey: 'Tipo_curso_id'
+            });
+        }
     };
 
     return Tipo_curso;
 }
 
-module.exports = tipoCursoModel;
+export default Tipo_curso;

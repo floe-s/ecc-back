@@ -1,4 +1,4 @@
-function turnoHorarioModel(sequelize, DataTypes) {
+function Turno_horario(sequelize, DataTypes) {
     const alias = 'Turno_horario';
 
     const cols = {
@@ -23,13 +23,16 @@ function turnoHorarioModel(sequelize, DataTypes) {
 
     // RELACIONES
     Turno_horario.associate = function(models) {
-        Turno_horario.hasMany(models.Comision, {
-            as: 'comisiones',
-            foreignKey: 'Turno_horario_id'
-        });
+        if (models.Comision) {
+            
+            Turno_horario.hasMany(models.Comision, {
+                as: 'comisiones',
+                foreignKey: 'Turno_horario_id'
+            });
+        }
     };
 
     return Turno_horario;
 }
 
-module.exports = turnoHorarioModel;
+export default Turno_horario;

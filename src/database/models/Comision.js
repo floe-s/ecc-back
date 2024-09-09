@@ -1,4 +1,4 @@
-function comisionModel(sequelize, DataTypes) {
+function Comision(sequelize, DataTypes) {
     const alias = 'Comision';
 
     const cols = {
@@ -62,26 +62,28 @@ function comisionModel(sequelize, DataTypes) {
     const Comision = sequelize.define(alias, cols, config);
 
     // RELACIONES
-    Comision.associate = function(models) {
-        Comision.belongsTo(models.Usuario, {
-            as: 'administrador',
-            foreignKey: 'Administrador_id'
-        });
-        Comision.belongsTo(models.Usuario, {
-            as: 'profesor',
-            foreignKey: 'Profesor_id'
-        });
-        Comision.belongsTo(models.Curso, {
-            as: 'curso',
-            foreignKey: 'Curso_db_id'
-        });
-        Comision.belongsTo(models.Turno_horario, {
-            as: 'turnoHorario',
-            foreignKey: 'Turno_horario_id'
-        });
+    Comision.associate = function (models) {
+        if (models.Usuario && models.Curso && models.Turno_horario) {
+            Comision.belongsTo(models.Usuario, {
+                as: 'administrador',
+                foreignKey: 'Administrador_id'
+            });
+            Comision.belongsTo(models.Usuario, {
+                as: 'profesor',
+                foreignKey: 'Profesor_id'
+            });
+            Comision.belongsTo(models.Curso, {
+                as: 'curso',
+                foreignKey: 'Curso_db_id'
+            });
+            Comision.belongsTo(models.Turno_horario, {
+                as: 'turnoHorario',
+                foreignKey: 'Turno_horario_id'
+            });
+        }
     };
 
     return Comision;
 }
 
-module.exports = comisionModel;
+export default Comision;

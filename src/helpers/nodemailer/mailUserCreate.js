@@ -1,5 +1,5 @@
-const transporter = require('./mailConfigs.js');
-const dotenv = require('dotenv');
+import transporter from'./mailConfigs.js';
+import dotenv from'dotenv';
 
 let message = (user, lang, res) => {
     let msg;
@@ -54,4 +54,4 @@ let message = (user, lang, res) => {
     })
 }
 
-module.exports = message
+export default message

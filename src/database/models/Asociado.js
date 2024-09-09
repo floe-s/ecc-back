@@ -1,4 +1,4 @@
-function asociadoModel(sequelize, DataTypes) {
+function Asociado(sequelize, DataTypes) {
     const alias = 'Asociado';
 
     const cols = {
@@ -25,18 +25,21 @@ function asociadoModel(sequelize, DataTypes) {
 
     const Asociado = sequelize.define(alias, cols, config);
 
-    Asociado.associate = function(models) {
-        Asociado.belongsTo(models.Usuario, {
-            as: 'usuario',
-            foreignKey: 'Usuario_db_id'
-        });
-        Asociado.belongsTo(models.Academia, {
-            as: 'academia',
-            foreignKey: 'Academia_id'
-        });
+    Asociado.associate = function (models) {
+        if (models.Usuario && models.Academia) {
+
+            Asociado.belongsTo(models.Usuario, {
+                as: 'usuario',
+                foreignKey: 'Usuario_db_id'
+            });
+            Asociado.belongsTo(models.Academia, {
+                as: 'academia',
+                foreignKey: 'Academia_id'
+            });
+        }
     };
 
     return Asociado;
 }
 
-module.exports = asociadoModel;
+export default Asociado;

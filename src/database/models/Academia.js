@@ -1,4 +1,4 @@
-function academiaModel(sequelize, DataTypes) {
+function Academia(sequelize, DataTypes) {
     const alias = 'Academia';
 
     const cols = {
@@ -23,13 +23,16 @@ function academiaModel(sequelize, DataTypes) {
 
     // RELACIONES 
     Academia.associate = (models) => {
-        Academia.hasMany(models.Asociado, {
-            as: 'asociados',
-            foreignKey: 'Academia_id'
-        })
-    }   
-    
+        if (models.Asociado) {
+
+            Academia.hasMany(models.Asociado, {
+                as: 'asociados',
+                foreignKey: 'Academia_id'
+            })
+        }
+    }
+
     return Academia;
 }
 
-module.exports = academiaModel;
+export default Academia;

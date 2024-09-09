@@ -1,4 +1,4 @@
-function rolModel(sequelize, DataTypes) {
+function Rol(sequelize, DataTypes) {
     const alias = 'Rol';
 
     const cols = {
@@ -23,13 +23,16 @@ function rolModel(sequelize, DataTypes) {
 
     // RELACIONES    
     Rol.associate = function(models) {
-        Rol.hasMany(models.Usuario, {
-            as: 'usuarios',
-            foreignKey: 'Rol_id'
-        });
+        if(models.Usuario){
+
+            Rol.hasMany(models.Usuario, {
+                as: 'usuarios',
+                foreignKey: 'Rol_id'
+            });
+        }
     };
 
     return Rol;
 }
 
-module.exports = rolModel;
+export default Rol;

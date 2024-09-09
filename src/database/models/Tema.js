@@ -1,4 +1,4 @@
-function temasModel(sequelize, DataTypes) {
+function Tema(sequelize, DataTypes) {
     const alias = 'Tema';
 
     const cols = {
@@ -30,13 +30,16 @@ function temasModel(sequelize, DataTypes) {
     const Tema = sequelize.define(alias, cols, config);
 
     Tema.associate = function(models) {
-        Tema.belongsTo(models.Modulo, {
-            as: 'modulo',
-            foreignKey: 'Modulo_id'
-        });
+        if(models.Modulo){
+
+            Tema.belongsTo(models.Modulo, {
+                as: 'modulo',
+                foreignKey: 'Modulo_id'
+            });
+        }
     };
 
     return Tema;
 }
 
-module.exports = temasModel;
+export default Tema;

@@ -1,4 +1,4 @@
-function tematicaModel(sequelize, DataTypes) {
+function Tematica(sequelize, DataTypes) {
     const alias = 'Tematica';
 
     const cols = {
@@ -23,17 +23,22 @@ function tematicaModel(sequelize, DataTypes) {
 
     // RELACIONES
     Tematica.associate = function(models) {
-        Tematica.hasMany(models.Curso, {
-            as: 'cursos',
-            foreignKey: 'Tematica_id'
-        });
-        Tematica.hasMany(models.Usuario, {
-            as: 'usuarios',
-            foreignKey: 'Tematica_id'
-        });
+        if (models.Curso) {
+            Tematica.hasMany(models.Curso, {
+                as: 'cursos',
+                foreignKey: 'Tematica_id'
+            });
+        }
+        if (models.Usuario) {
+            Tematica.hasMany(models.Usuario, {
+                as: 'usuarios',
+                foreignKey: 'Tematica_id'
+            });
+        }
     };
+    
 
     return Tematica;
 }
 
-module.exports = tematicaModel;
+export default Tematica;
